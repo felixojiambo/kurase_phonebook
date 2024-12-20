@@ -16,6 +16,7 @@ export class ContactsComponent implements OnInit {
   contacts$: Observable<Contact[]>;
   viewMode: 'list' | 'grid' = 'list';
   selectedContact: Contact | null = null;
+  
   showContactDetail = false;
   constructor(private contactService: ContactService) {
     this.contacts$ = this.contactService.contacts$;
@@ -56,6 +57,16 @@ export class ContactsComponent implements OnInit {
   }
 
   onCloseDetail() {
+    this.showContactDetail = false;
+    this.selectedContact = null;
+  }
+  onContactUpdated(updatedContact: Contact) {
+    this.contactService.updateContact(updatedContact);
+    // The BehaviorSubject in the service ensures the UI updates automatically.
+  }
+
+  onContactDeleted(id: number) {
+    this.contactService.softDeleteContact(id);
     this.showContactDetail = false;
     this.selectedContact = null;
   }
