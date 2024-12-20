@@ -1,10 +1,14 @@
-import { Component, Output, EventEmitter } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Component, Output, EventEmitter, NO_ERRORS_SCHEMA } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-header',
   standalone: true,
+  imports: [CommonModule, FormsModule], 
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.css'],
+ 
 })
 export class HeaderComponent {
   @Output() toggleView = new EventEmitter<void>();

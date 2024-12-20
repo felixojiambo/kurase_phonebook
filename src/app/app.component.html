@@ -1,3 +1,25 @@
-<div class="text-center">
-  <h1 class="text-4xl font-bold text-blue-500">Welcome to Phonebook App!</h1>
-</div>
+<app-header
+  (toggleView)="toggleViewMode()"
+  (toggleDarkMode)="toggleDarkMode()"
+  (search)="onSearch($event)"
+  (toggleSidenav)="toggleSidenav()"
+></app-header>
+
+<app-sidenav *ngIf="isSidenavOpen" (navigate)="onNavigate($event)"></app-sidenav>
+
+<!-- Overlay for mobile when sidenav is open -->
+<div
+  *ngIf="isSidenavOpen"
+  class="fixed inset-0 bg-black bg-opacity-50 z-10 md:hidden"
+  (click)="toggleSidenav()"
+></div>
+
+<main
+  class="transition-all duration-300 ml-64 mt-16 p-4 dark:bg-gray-900 min-h-screen"
+  [ngClass]="{
+    'ml-64': isSidenavOpen,
+    'ml-16': !isSidenavOpen
+  }"
+>
+  <router-outlet></router-outlet>
+</main>

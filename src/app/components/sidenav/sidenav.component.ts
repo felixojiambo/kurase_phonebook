@@ -1,8 +1,10 @@
+import { CommonModule } from '@angular/common';
 import { Component, Output, EventEmitter } from '@angular/core';
 
 @Component({
   selector: 'app-sidenav',
   standalone: true,
+  imports: [CommonModule],
   templateUrl: './sidenav.component.html',
   styleUrls: ['./sidenav.component.css'],
 })
