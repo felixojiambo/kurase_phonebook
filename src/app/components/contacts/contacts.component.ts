@@ -2,9 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ContactService } from '../../core/services/contact.service';
 import { Contact } from '../../core/models/contact.model';
-import { Observable } from 'rxjs';
 import { ContactDetailComponent } from "../contact-detail/contact-detail.component";
 import { ConfirmationDialogComponent } from "../confirmation-dialog/confirmation-dialog.component";
+import { Observable, combineLatest, map } from 'rxjs';
 
 @Component({
   selector: 'app-contacts',
@@ -21,10 +21,32 @@ export class ContactsComponent implements OnInit {
   showContactDetail = false;
   selectedIds: number[] = [];
   showBulkDeleteConfirm = false;
-  constructor(private contactService: ContactService) {
-    this.contacts$ = this.contactService.contacts$;
-  }
 
+  // Enhanced: Add group filtering and favorites
+  filterGroup: string = 'All'; // 'All' | 'Family' | 'Friends' | 'Work' | 'Other'
+  showFavoritesOnly: boolean = false;
+
+  // Final filtered contacts$
+  filteredContacts$: Observable<Contact[]>;
+
+ constructor(private contactService: ContactService) {
+    this.contacts$ = this.contactService.contacts$;
+
+    this.filteredContacts$ = combineLatest([
+      this.contacts$,
+    ]).pipe(
+      map(([contacts]) => {
+        let result = contacts;
+        if (this.showFavoritesOnly) {
+          result = result.filter(c => c.favorite);
+        }
+        if (this.filterGroup !== 'All') {
+          result = result.filter(c => c.group === this.filterGroup);
+        }
+        return result;
+      })
+    );
+  }
   ngOnInit(): void {
     const savedViewMode = localStorage.getItem('viewMode');
     if (savedViewMode === 'grid' || savedViewMode === 'list') {
@@ -102,5 +124,22 @@ export class ContactsComponent implements OnInit {
     this.contactService.softDeleteMultiple(this.selectedIds);
     this.selectedIds = [];
     this.showBulkDeleteConfirm = false;
+  }
+  // Toggle favorite status of a single contact
+  onToggleFavorite(event: Event, contact: Contact) {
+    event.stopPropagation();
+    this.contactService.toggleFavorite(contact.id);
+  }
+
+  // Group filter change
+  onGroupChange(event: Event) {
+    const select = event.target as HTMLSelectElement;
+    const group = select.value;
+    this.filterGroup = group;
+  }
+  
+  // Toggle Favorites Only
+  toggleFavoritesOnly() {
+    this.showFavoritesOnly = !this.showFavoritesOnly;
   }
 }

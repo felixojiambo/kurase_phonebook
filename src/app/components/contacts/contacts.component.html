@@ -3,13 +3,37 @@
     <div class="flex items-center justify-between mb-4">
       <h2 class="text-2xl font-semibold text-gray-800 dark:text-white">All Contacts (Alphabetical)</h2>
   
-      <div class="flex space-x-2">
+      <div class="flex space-x-2 items-center">
+        <!-- Group Filter Dropdown -->
+        <select
+  (change)="onGroupChange($event)"
+  class="px-2 py-1 border rounded dark:bg-gray-700 dark:text-white dark:border-gray-600"
+>
+  <option value="All">All</option>
+  <option value="Family">Family</option>
+  <option value="Friends">Friends</option>
+  <option value="Work">Work</option>
+  <option value="Other">Other</option>
+</select>
+
+  
+        <!-- Favorites Toggle -->
+        <button
+          (click)="toggleFavoritesOnly()"
+          class="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600"
+        >
+          {{ showFavoritesOnly ? 'Show All' : 'Show Favorites' }}
+        </button>
+  
+        <!-- View Mode Toggle -->
         <button
           (click)="toggleViewMode()"
           class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
         >
           Switch to {{ viewMode === 'list' ? 'Grid' : 'List' }} View
         </button>
+  
+        <!-- Bulk Delete Button -->
         <button
           *ngIf="selectedIds.length > 0"
           (click)="confirmBulkDelete()"
@@ -23,7 +47,7 @@
     <!-- List View -->
     <div *ngIf="viewMode === 'list'" class="space-y-2">
       <div
-        *ngFor="let contact of contacts$ | async"
+        *ngFor="let contact of filteredContacts$ | async"
         (click)="onContactClick(contact)"
         class="p-4 border border-gray-300 dark:border-gray-700 rounded shadow-sm bg-white dark:bg-gray-800 flex items-center cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 relative"
       >
@@ -46,13 +70,40 @@
           <p class="text-gray-600 dark:text-gray-300">{{ contact.email }}</p>
           <p class="text-gray-600 dark:text-gray-300">{{ contact.phone }}</p>
         </div>
+  
+        <!-- Favorite Toggle Icon -->
+        <button
+          (click)="onToggleFavorite($event, contact)"
+          class="ml-2 p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded"
+        >
+          <svg
+            class="h-6 w-6"
+            [ngClass]="{'text-yellow-500': contact.favorite, 'text-gray-400': !contact.favorite}"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <!-- Star Icon -->
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.97a1
+                1 0 00.95.69h4.164c.969 0 1.371 1.24.588
+                1.81l-3.37 2.45a1 1 0 00-.364
+                1.118l1.286 3.97c.3.921-.755
+                1.688-1.54 1.118l-3.37-2.45a1 1 0
+                00-1.176 0l-3.37 2.45c-.784.57-1.838-.197-1.54-1.118l1.286-3.97a1
+                1 0 00-.364-1.118L2.98 9.397c-.783-.57-.38-1.81.588-1.81h4.164a1
+                1 0 00.95-.69l1.286-3.97z"
+            />
+          </svg>
+        </button>
       </div>
     </div>
   
     <!-- Grid View -->
     <div *ngIf="viewMode === 'grid'" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       <div
-        *ngFor="let contact of contacts$ | async"
+        *ngFor="let contact of filteredContacts$ | async"
         (click)="onContactClick(contact)"
         class="p-4 border border-gray-300 dark:border-gray-700 rounded shadow-sm bg-white dark:bg-gray-800 flex flex-col items-center cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 relative"
       >
@@ -73,6 +124,33 @@
         </h3>
         <p class="text-gray-600 dark:text-gray-300">{{ contact.email }}</p>
         <p class="text-gray-600 dark:text-gray-300">{{ contact.phone }}</p>
+  
+        <!-- Favorite Toggle Icon -->
+        <button
+          (click)="onToggleFavorite($event, contact)"
+          class="mt-2 p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded"
+        >
+          <svg
+            class="h-6 w-6"
+            [ngClass]="{'text-yellow-500': contact.favorite, 'text-gray-400': !contact.favorite}"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <!-- Star Icon -->
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.97a1
+                1 0 00.95.69h4.164c.969 0 1.371 1.24.588
+                1.81l-3.37 2.45a1 1 0 00-.364
+                1.118l1.286 3.97c.3.921-.755
+                1.688-1.54 1.118l-3.37-2.45a1 1 0
+                00-1.176 0l-3.37 2.45c-.784.57-1.838-.197-1.54-1.118l1.286-3.97a1
+                1 0 00-.364-1.118L2.98 9.397c-.783-.57-.38-1.81.588-1.81h4.164a1
+                1 0 00.95-.69l1.286-3.97z"
+            />
+          </svg>
+        </button>
       </div>
     </div>
   </div>
@@ -86,6 +164,7 @@
     (deleted)="onContactDeleted($event)"
   ></app-contact-detail>
   
+  <!-- Bulk Delete Confirmation -->
   <app-confirmation-dialog
     *ngIf="showBulkDeleteConfirm"
     message="Are you sure you want to delete selected contacts?"

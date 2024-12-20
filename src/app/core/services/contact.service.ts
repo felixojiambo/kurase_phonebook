@@ -168,4 +168,14 @@ export class ContactService {
       ? Math.max(...this.contacts.map((c) => c.id)) + 1
       : 1;
   }
+  toggleFavorite(id: number): void {
+    const idx = this.contacts.findIndex(c => c.id === id);
+    if (idx > -1) {
+      this.contacts[idx].favorite = !this.contacts[idx].favorite;
+      this.contacts[idx].updatedAt = new Date();
+      this.refreshContacts(); 
+    }
+  }
+  
+  
 }
