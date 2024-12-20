@@ -3,18 +3,20 @@ import { CommonModule } from '@angular/common';
 import { ContactService } from '../../core/services/contact.service';
 import { Contact } from '../../core/models/contact.model';
 import { Observable } from 'rxjs';
+import { ContactDetailComponent } from "../contact-detail/contact-detail.component";
 
 @Component({
   selector: 'app-contacts',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, ContactDetailComponent],
   templateUrl: './contacts.component.html',
   styleUrls: ['./contacts.component.css'],
 })
 export class ContactsComponent implements OnInit {
   contacts$: Observable<Contact[]>;
   viewMode: 'list' | 'grid' = 'list';
-
+  selectedContact: Contact | null = null;
+  showContactDetail = false;
   constructor(private contactService: ContactService) {
     this.contacts$ = this.contactService.contacts$;
   }
@@ -47,5 +49,14 @@ export class ContactsComponent implements OnInit {
   toggleViewMode() {
     this.viewMode = this.viewMode === 'list' ? 'grid' : 'list';
     localStorage.setItem('viewMode', this.viewMode);
+  }
+  onContactClick(contact: Contact) {
+    this.selectedContact = contact;
+    this.showContactDetail = true;
+  }
+
+  onCloseDetail() {
+    this.showContactDetail = false;
+    this.selectedContact = null;
   }
 }

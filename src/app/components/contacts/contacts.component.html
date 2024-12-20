@@ -14,7 +14,8 @@
     <div *ngIf="viewMode === 'list'" class="space-y-2">
       <div
         *ngFor="let contact of contacts$ | async"
-        class="p-4 border border-gray-300 dark:border-gray-700 rounded shadow-sm bg-white dark:bg-gray-800 flex items-center"
+        (click)="onContactClick(contact)"
+        class="p-4 border border-gray-300 dark:border-gray-700 rounded shadow-sm bg-white dark:bg-gray-800 flex items-center cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700"
       >
         <img
           *ngIf="contact.imageUrl"
@@ -36,7 +37,8 @@
     <div *ngIf="viewMode === 'grid'" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       <div
         *ngFor="let contact of contacts$ | async"
-        class="p-4 border border-gray-300 dark:border-gray-700 rounded shadow-sm bg-white dark:bg-gray-800 flex flex-col items-center"
+        (click)="onContactClick(contact)"
+        class="p-4 border border-gray-300 dark:border-gray-700 rounded shadow-sm bg-white dark:bg-gray-800 flex flex-col items-center cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700"
       >
         <img
           *ngIf="contact.imageUrl"
@@ -52,4 +54,11 @@
       </div>
     </div>
   </div>
+  
+  
+  <app-contact-detail
+    *ngIf="showContactDetail"
+    [contact]="selectedContact"
+    (close)="onCloseDetail()"
+  ></app-contact-detail>
   
