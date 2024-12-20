@@ -6,7 +6,8 @@
     (toggleSidenav)="toggleSidenav()"
   ></app-header>
 
-  <app-sidenav *ngIf="isSidenavOpen" (navigate)="onNavigate($event)"></app-sidenav>
+  <!-- Sidenav is now controlled by isSidenavOpen, but no navigate event needed since routerLink is used -->
+  <app-sidenav *ngIf="isSidenavOpen"></app-sidenav>
 
   <!-- Overlay for mobile when sidenav is open -->
   <div
