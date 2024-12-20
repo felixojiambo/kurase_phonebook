@@ -1,0 +1,6 @@
+firstName,lastName,email,phone,address,group,favorite
+John,Doe,john@doe.com,+123456789,123 Main St,Friends,false
+Jane,Smith,jane@smith.com,+987654321,456 Oak St,Work,true
+Alice,Johnson,alice@johnson.com,+135791113,789 Pine St,Family,false
+Bob,Williams,bob@williams.com,+246810121,101 Maple St,Other,false
+Sarah,Brown,sarah@brown.com,+1123581321,202 Cedar St,Friends,true
