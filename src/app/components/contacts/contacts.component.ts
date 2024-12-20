@@ -5,7 +5,7 @@ import { Contact } from '../../core/models/contact.model';
 import { ContactDetailComponent } from "../contact-detail/contact-detail.component";
 import { ConfirmationDialogComponent } from "../confirmation-dialog/confirmation-dialog.component";
 import { Observable, combineLatest, map } from 'rxjs';
-
+import { saveAs } from 'file-saver';
 @Component({
   selector: 'app-contacts',
   standalone: true,
@@ -28,7 +28,7 @@ export class ContactsComponent implements OnInit {
 
   // Final filtered contacts$
   filteredContacts$: Observable<Contact[]>;
-
+  recentContacts: Contact[] = [];
  constructor(private contactService: ContactService) {
     this.contacts$ = this.contactService.contacts$;
 
@@ -52,6 +52,7 @@ export class ContactsComponent implements OnInit {
     if (savedViewMode === 'grid' || savedViewMode === 'list') {
       this.viewMode = savedViewMode;
     }
+    this.updateRecentContacts();
   }
 
   addContact() {
@@ -79,8 +80,12 @@ export class ContactsComponent implements OnInit {
   onContactClick(contact: Contact) {
     this.selectedContact = contact;
     this.showContactDetail = true;
+    this.contactService.addToRecent(contact.id);
+    this.updateRecentContacts();
   }
-
+  updateRecentContacts() {
+    this.recentContacts = this.contactService.getRecentContacts();
+  }
   onCloseDetail() {
     this.showContactDetail = false;
     this.selectedContact = null;
@@ -141,5 +146,67 @@ export class ContactsComponent implements OnInit {
   // Toggle Favorites Only
   toggleFavoritesOnly() {
     this.showFavoritesOnly = !this.showFavoritesOnly;
+  }
+
+  exportContacts() {
+    this.contactService.contacts$.subscribe(contacts => {
+      const header = ['firstName','lastName','email','phone','address','group','favorite'];
+      const rows = contacts.map(c => [
+        c.firstName, 
+        c.lastName, 
+        c.email, 
+        c.phone, 
+        c.address, 
+        c.group || '',
+        c.favorite ? 'true' : 'false'
+      ]);
+  
+      const csvContent = [header, ...rows]
+        .map(e => e.map(val => `"${(val||'').replace(/"/g,'""')}"`).join(','))
+        .join('\n');
+  
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      saveAs(blob, 'contacts_export.csv');
+    });
+  }
+  
+  // Add a method to import contacts from CSV
+  onImportContacts(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (!input.files?.length) return;
+  
+    const file = input.files[0];
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const text = e.target?.result as string;
+      const lines = text.split('\n').map(l => l.trim()).filter(l => l);
+      const [headerLine, ...dataLines] = lines;
+      const headers = headerLine.split(',').map(h => h.replace(/"/g,'').trim());
+  
+      dataLines.forEach(line => {
+        const values = line.split(',').map(v => v.replace(/"/g,'').trim());
+        const contactData: any = {};
+        headers.forEach((h, i) => contactData[h] = values[i]);
+  
+        // Convert favorite to boolean
+        contactData.favorite = (contactData.favorite === 'true');
+  
+        // Add contact using contactService
+        this.contactService.addContact({
+          firstName: contactData.firstName || '',
+          lastName: contactData.lastName || '',
+          email: contactData.email || '',
+          phone: contactData.phone || '',
+          address: contactData.address || '',
+          imageUrl: '',
+          group: contactData.group || '',
+          favorite: !!contactData.favorite,
+        });
+      });
+      // Reset input
+      input.value = '';
+      alert('Contacts imported successfully!');
+    };
+    reader.readAsText(file);
   }
 }

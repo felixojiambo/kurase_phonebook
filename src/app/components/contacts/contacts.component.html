@@ -1,21 +1,46 @@
 <div class="container mx-auto p-4">
 
+    <!-- Recent Contacts Section -->
+    <div *ngIf="recentContacts.length > 0" class="mb-4">
+      <h3 class="text-xl font-semibold text-gray-800 dark:text-white">Recent Contacts</h3>
+      <div class="flex space-x-4 mt-2">
+        <div
+          *ngFor="let contact of recentContacts"
+          (click)="onContactClick(contact)"
+          class="p-4 border border-gray-300 dark:border-gray-700 rounded shadow-sm bg-white dark:bg-gray-800 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center"
+        >
+          <img
+            *ngIf="contact.imageUrl"
+            [src]="contact.imageUrl"
+            [alt]="contact.firstName + ' ' + contact.lastName"
+            class="w-12 h-12 rounded-full mr-4"
+          />
+          <div>
+            <h4 class="text-lg font-bold text-gray-800 dark:text-white">
+              {{ contact.lastName }}, {{ contact.firstName }}
+            </h4>
+            <p class="text-gray-600 dark:text-gray-300">{{ contact.email }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- End of Recent Contacts Section -->
+  
     <div class="flex items-center justify-between mb-4">
       <h2 class="text-2xl font-semibold text-gray-800 dark:text-white">All Contacts (Alphabetical)</h2>
   
       <div class="flex space-x-2 items-center">
         <!-- Group Filter Dropdown -->
         <select
-  (change)="onGroupChange($event)"
-  class="px-2 py-1 border rounded dark:bg-gray-700 dark:text-white dark:border-gray-600"
->
-  <option value="All">All</option>
-  <option value="Family">Family</option>
-  <option value="Friends">Friends</option>
-  <option value="Work">Work</option>
-  <option value="Other">Other</option>
-</select>
-
+          (change)="onGroupChange($event)"
+          class="px-2 py-1 border rounded dark:bg-gray-700 dark:text-white dark:border-gray-600"
+        >
+          <option value="All">All</option>
+          <option value="Family">Family</option>
+          <option value="Friends">Friends</option>
+          <option value="Work">Work</option>
+          <option value="Other">Other</option>
+        </select>
   
         <!-- Favorites Toggle -->
         <button
@@ -41,6 +66,23 @@
         >
           Bulk Delete
         </button>
+  
+        <!-- CSV Export -->
+        <button
+          (click)="exportContacts()"
+          class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+        >
+          Export CSV
+        </button>
+  
+        <!-- CSV Import -->
+        <label class="px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600 cursor-pointer">
+          Import CSV
+          <input type="file" accept=".csv" (change)="onImportContacts($event)" class="hidden"/>
+        </label>
+  
+        <!-- Instructions -->
+        <a href="assets/sample_contacts.csv" target="_blank" class="text-blue-500 underline">Download Sample CSV</a>
       </div>
     </div>
   
@@ -153,22 +195,23 @@
         </button>
       </div>
     </div>
+  
+    <!-- Detail Modal -->
+    <app-contact-detail
+      *ngIf="showContactDetail"
+      [contact]="selectedContact"
+      (close)="onCloseDetail()"
+      (updated)="onContactUpdated($event)"
+      (deleted)="onContactDeleted($event)"
+    ></app-contact-detail>
+  
+    <!-- Bulk Delete Confirmation -->
+    <app-confirmation-dialog
+      *ngIf="showBulkDeleteConfirm"
+      message="Are you sure you want to delete selected contacts?"
+      (confirm)="bulkDelete()"
+      (cancel)="cancelBulkDelete()"
+    ></app-confirmation-dialog>
+  
   </div>
-  
-  <!-- Detail Modal -->
-  <app-contact-detail
-    *ngIf="showContactDetail"
-    [contact]="selectedContact"
-    (close)="onCloseDetail()"
-    (updated)="onContactUpdated($event)"
-    (deleted)="onContactDeleted($event)"
-  ></app-contact-detail>
-  
-  <!-- Bulk Delete Confirmation -->
-  <app-confirmation-dialog
-    *ngIf="showBulkDeleteConfirm"
-    message="Are you sure you want to delete selected contacts?"
-    (confirm)="bulkDelete()"
-    (cancel)="cancelBulkDelete()"
-  ></app-confirmation-dialog>
   

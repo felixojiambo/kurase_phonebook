@@ -38,7 +38,7 @@ export class ContactService {
     },
     // Add more mock contacts as needed
   ];
-
+  private recentContactIds: number[] = [];
   // BehaviorSubject to emit current contacts state
   private contactsSubject: BehaviorSubject<Contact[]> = new BehaviorSubject<Contact[]>(
     this.getAllContacts()
@@ -176,6 +176,20 @@ export class ContactService {
       this.refreshContacts(); 
     }
   }
-  
+  addToRecent(id: number) {
+    // Remove if already in list
+    this.recentContactIds = this.recentContactIds.filter(cId => cId !== id);
+    // Add to front
+    this.recentContactIds.unshift(id);
+    // Limit to last 5
+    if (this.recentContactIds.length > 5) {
+      this.recentContactIds.pop();
+    }
+  }
+  getRecentContacts(): Contact[] {
+    return this.recentContactIds
+      .map(id => this.contacts.find(c => c.id === id && !c.deleted))
+      .filter((c): c is Contact => !!c); // filter out null/undefined
+  }
   
 }
