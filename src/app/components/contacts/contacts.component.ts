@@ -4,11 +4,12 @@ import { ContactService } from '../../core/services/contact.service';
 import { Contact } from '../../core/models/contact.model';
 import { Observable } from 'rxjs';
 import { ContactDetailComponent } from "../contact-detail/contact-detail.component";
+import { ConfirmationDialogComponent } from "../confirmation-dialog/confirmation-dialog.component";
 
 @Component({
   selector: 'app-contacts',
   standalone: true,
-  imports: [CommonModule, ContactDetailComponent],
+  imports: [CommonModule, ContactDetailComponent, ConfirmationDialogComponent],
   templateUrl: './contacts.component.html',
   styleUrls: ['./contacts.component.css'],
 })
@@ -18,6 +19,8 @@ export class ContactsComponent implements OnInit {
   selectedContact: Contact | null = null;
   
   showContactDetail = false;
+  selectedIds: number[] = [];
+  showBulkDeleteConfirm = false;
   constructor(private contactService: ContactService) {
     this.contacts$ = this.contactService.contacts$;
   }
@@ -69,5 +72,35 @@ export class ContactsComponent implements OnInit {
     this.contactService.softDeleteContact(id);
     this.showContactDetail = false;
     this.selectedContact = null;
+  }
+  // Bulk Selection Logic
+  isCheckboxEvent = false;
+
+  onCheckboxClick(event: Event, contactId: number) {
+    event.stopPropagation();
+    this.isCheckboxEvent = true;
+    const checkbox = event.target as HTMLInputElement;
+    if (checkbox.checked) {
+      this.selectedIds.push(contactId);
+    } else {
+      this.selectedIds = this.selectedIds.filter(id => id !== contactId);
+    }
+
+    // Reset after handling
+    setTimeout(() => this.isCheckboxEvent = false, 0);
+  }
+
+  confirmBulkDelete() {
+    this.showBulkDeleteConfirm = true;
+  }
+
+  cancelBulkDelete() {
+    this.showBulkDeleteConfirm = false;
+  }
+
+  bulkDelete() {
+    this.contactService.softDeleteMultiple(this.selectedIds);
+    this.selectedIds = [];
+    this.showBulkDeleteConfirm = false;
   }
 }

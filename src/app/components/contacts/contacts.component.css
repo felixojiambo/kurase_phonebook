@@ -8,4 +8,7 @@ div > div > div:hover {
   .cursor-pointer {
     cursor: pointer;
   }
-  
+  div > div > div:hover {
+  transform: translateY(-2px);
+  transition: transform 0.2s;
+}
