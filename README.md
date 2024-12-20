@@ -101,8 +101,8 @@ tailwind.config.js
 
 ### Prerequisites
 
-- **Node.js** (v16+)
-- **Angular CLI** (v15+)
+- **Node.js** (v20+)
+- **Angular CLI** (v17+)
 - **npm** or **yarn** package manager
 
 ### Steps
