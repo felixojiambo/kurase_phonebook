@@ -1,0 +1,11 @@
+/* Ensure the sidenav doesn't cover the main content */
+.main-content {
+    margin-left: 16rem; /* Adjust based on sidenav width */
+  }
+  
+  @media (max-width: 768px) {
+    aside {
+      width: 4rem; /* Collapsed width */
+    }
+  }
+  

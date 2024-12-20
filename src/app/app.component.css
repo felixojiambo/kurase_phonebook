@@ -1,0 +1,7 @@
+/* Adjust main content margin based on sidenav width */
+@media (max-width: 768px) {
+    main {
+      margin-left: 4rem; /* Collapsed sidenav width */
+    }
+  }
+  

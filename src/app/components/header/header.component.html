@@ -1,0 +1,56 @@
+<header class="flex items-center justify-between p-4 bg-white dark:bg-gray-800 shadow-md fixed top-0 left-0 right-0 z-10">
+    <!-- Application Title/Logo -->
+    <div class="flex items-center space-x-2">
+      <svg class="w-8 h-8 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <!-- Replace with your logo SVG -->
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+      </svg>
+      <h1 class="text-2xl font-bold text-gray-800 dark:text-white">Phonebook</h1>
+    </div>
+  
+    <!-- Search Bar -->
+    <div class="flex-1 mx-4">
+      <input
+        type="text"
+        [(ngModel)]="searchTerm"
+        (input)="onSearchChange()"
+        placeholder="Search contacts..."
+        class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded dark:bg-gray-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+      />
+    </div>
+  
+    <!-- Action Buttons -->
+    <div class="flex items-center space-x-4">
+      <button (click)="onToggleView()" class="p-2 bg-gray-200 dark:bg-gray-700 rounded hover:bg-gray-300 dark:hover:bg-gray-600">
+        <!-- View Mode Icon -->
+        <svg
+          *ngIf="true" <!-- Replace with actual condition if needed -->
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-6 w-6 text-gray-800 dark:text-gray-200"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <!-- List Icon -->
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+        <!-- Grid Icon (Toggle as needed) -->
+        <!-- You can toggle icons based on the current view mode -->
+      </button>
+  
+      <button (click)="onToggleDarkMode()" class="p-2 bg-gray-200 dark:bg-gray-700 rounded hover:bg-gray-300 dark:hover:bg-gray-600">
+        <!-- Dark Mode Icon -->
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-6 w-6 text-gray-800 dark:text-gray-200"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <!-- Moon Icon -->
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m8.66-8.66h-1M4.34 12.34h-1m15.364 4.95l-.707-.707M6.343 6.343l-.707-.707m12.02 12.02l-.707-.707M6.343 17.657l-.707-.707" />
+        </svg>
+      </button>
+    </div>
+  </header>
+  
