@@ -13,17 +13,20 @@ import { Observable } from 'rxjs';
 })
 export class ContactsComponent implements OnInit {
   contacts$: Observable<Contact[]>;
+  viewMode: 'list' | 'grid' = 'list';
 
   constructor(private contactService: ContactService) {
     this.contacts$ = this.contactService.contacts$;
   }
 
   ngOnInit(): void {
-    // If needed, we can initialize or refresh data here
+    const savedViewMode = localStorage.getItem('viewMode');
+    if (savedViewMode === 'grid' || savedViewMode === 'list') {
+      this.viewMode = savedViewMode;
+    }
   }
 
   addContact() {
-    // Example contact to add
     const newContact: Omit<Contact, 'id' | 'createdAt' | 'updatedAt' | 'deleted'> = {
       firstName: 'Jane',
       lastName: 'Smith',
@@ -39,5 +42,10 @@ export class ContactsComponent implements OnInit {
 
   deleteContact(id: number) {
     this.contactService.softDeleteContact(id);
+  }
+
+  toggleViewMode() {
+    this.viewMode = this.viewMode === 'list' ? 'grid' : 'list';
+    localStorage.setItem('viewMode', this.viewMode);
   }
 }
