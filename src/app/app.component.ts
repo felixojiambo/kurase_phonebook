@@ -3,6 +3,7 @@ import { RouterModule } from '@angular/router';
 import { HeaderComponent } from './components/header/header.component';
 import { SidenavComponent } from './components/sidenav/sidenav.component';
 import { CommonModule } from '@angular/common';
+import { ContactService } from './core/services/contact.service';
 
 @Component({
   selector: 'app-root',
@@ -17,7 +18,7 @@ export class AppComponent implements OnInit {
   isDarkMode: boolean = false;
   viewMode: 'list' | 'grid' = 'list';
   isSidenavOpen: boolean = true;
-
+  constructor(private contactService: ContactService) {}
   ngOnInit() {
     // Load dark mode preference
     const darkMode = localStorage.getItem('darkMode');
@@ -53,9 +54,8 @@ export class AppComponent implements OnInit {
   }
 
   onSearch(term: string) {
-    // Placeholder search logic
-    // This could trigger a search filter in your contacts list once implemented.
-    console.log(`Search term: ${term}`);
+    // Call contactService to filter contacts based on search term
+    this.contactService.searchContacts(term);
   }
 
   toggleSidenav() {
