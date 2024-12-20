@@ -5,6 +5,6 @@ import { FavoritesComponent } from './components/favorites/favorites.component';
 export const appRoutes: Routes = [
   { path: 'home', component: ContactsComponent },
   { path: 'favorites', component: FavoritesComponent },
-  { path: '', redirectTo: '/home', pathMatch: 'full' },
-  { path: '**', redirectTo: '/home' },
+//   { path: '', redirectTo: '/home', pathMatch: 'full' },
+//   { path: '**', redirectTo: '/home' },
 ];
